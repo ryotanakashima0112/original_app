@@ -1,0 +1,11 @@
+<% unless current_user == user%>
+  <% battle1 = Battle.find_by(user_id: current_user.id, match_id: user.id, doing: false) %>
+  <% battle2 = Battle.find_by(user_id: user.id, match_id: current_user.id, doing: false)%>
+  <% if battle1.nil? && battle2.nil? %>
+    <%= form_for(current_user.battles.build) do |f| %>
+      <%= hidden_field_tag :match_id, user.id %>
+      <%= hidden_field_tag :user_id, current_user.id%>
+      <%= f.submit '再度対戦を申し込む', class: 'btn btn-primary' %>
+    <% end %>
+  <% end %>
+<% end %>

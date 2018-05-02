@@ -1,0 +1,110 @@
+<div class="user-profile">
+  <div class="icon">
+    <img src="<%= gravatar_url(@user, size: 100) %>" alt="" class="img-circle">
+    <h1><%= @user.name %></h1>
+    <% unless current_user == @user %>
+      <% if @user.match_battle?(current_user)  %>
+        <%= render "battles/match_button", user: @user %>
+      <% elsif current_user.request_battle_to?(@user) %>
+        <%= render "battles/requester_button", user: @user %>
+      <% elsif  @user.request_battle_to?(current_user) %>
+        <%= render "battles/requested_button", user: @user  %>
+      <% else %>
+        <%= render "battles/now_just_request_button", user: @user %>
+      <% end %>
+    <% end %>
+  </div>
+ 
+  <div class="match_status">
+  <% if current_user == @user %>
+  <div class="text-left">
+    <h2>対戦申請一覧</h2>
+    <ul class="row">
+      <% @request_battles.each do |battle| %>
+        <% user = User.find_by(id: battle.match_id) %>
+        <% unless current_user == user %>
+        <li class="user">
+          <div class="col-md-3">
+            <div class="panel panel-default">
+              <div class="panel-heading text-center">
+                <img class="panel-object img-rounded" src="<%= gravatar_url(user, { size: 50 }) %>" alt="">
+              </div>
+              <div class="panel-body">
+                <%= user.name %>
+                <p><%= link_to 'View profile', user_path(user) %></p>
+                <%= render "battles/requester_button", user: user %>
+              </div>
+            </div>
+          </div>
+        </li>
+        <% end %>
+      <% end %>
+    </ul>
+  </div>
+  
+  <div class="text-center">
+    <h2>対戦を申し込んできた人一覧</h2>
+     <ul class="row">
+      <% @requested_battles.each do |battle| %>
+        <% user = User.find(battle.user_id) %>
+        <li class="user">
+          <div class="col-md-3">
+            <div class="panel panel-default">
+              <div class="panel-heading text-center">
+                <img class="panel-object img-rounded" src="<%= gravatar_url(user, { size: 50 }) %>" alt="">
+              </div>
+              <div class="panel-body">
+                <%= user.name %>
+                <p><%= link_to 'View profile', user_path(user) %></p>
+                <%= render "battles/requested_button", user: user %>
+              </div>
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+  
+   <div class="text-right">
+    <h2>マッチング成立一覧</h2>
+    <ul class="row">
+      <% @match_battles.each do |battle| %>
+        <% if battle.user == @user  %>
+          <% match_user = User.find(battle.match_id) %>
+          <li class="user">
+            <div class="col-md-3">
+              <div class="panel panel-default">
+                <div class="panel-heading text-center">
+                  <img class="panel-object img-rounded" src="<%= gravatar_url(match_user, { size: 50 }) %>" alt="">
+                </div>
+                <div class="panel-body">
+                  <%= match_user.name %>
+                  <p><%= link_to 'View profile', user_path(match_user) %></p>
+                  <%= render "battles/match_button", user: match_user %>
+                </div>
+              </div>
+            </div>
+          </li>
+        <% else %>
+          <% match_user = User.find(battle.user_id) %>
+          <li class="user">
+            <div class="col-md-3 col-sm-4 col-xs-12">
+              <div class="panel panel-default">
+                <div class="panel-heading text-center">
+                  <img class="panel-object img-rounded" src="<%= gravatar_url(match_user, { size: 50 }) %>" alt="">
+                </div>
+                <div class="panel-body">
+                  <%= match_user.name %>
+                  <p><%= link_to 'View profile', user_path(match_user) %></p>
+                  <%= render "battles/match_button", user: match_user %>
+                </div>
+              </div>
+            </div>
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
+  </div>
+  </div>
+  <% end %>
+</div>

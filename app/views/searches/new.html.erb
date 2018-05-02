@@ -1,0 +1,14 @@
+<div class="search">
+  <div class="row">
+    <div class="text-center">
+      <%= form_tag(new_search_path, method: :get,  class: 'form-inline') do %>
+        <div class="form-group">
+          <%= select_tag :search, options_for_select([["弱い", 0], ["普通", 1], ["強い", 2]]), class: 'form-control input-lg', size: 40 %>
+        </div>
+        <%= submit_tag 'デュエリストを探す', class: 'btn btn-success btn-lg' %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<%= render 'search', users: @users %>

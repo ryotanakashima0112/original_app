@@ -1,0 +1,16 @@
+<% unless current_user == user %>
+  <div class="pull-right">
+    <%= form_for(user.battles.find_by(match_id: current_user.id, doing: false), html: { method: :delete }) do |f| %>
+      <%= hidden_field_tag :match_id, current_user.id %>
+      <%= hidden_field_tag :user_id, user.id %>
+      <%= f.submit "拒否する", class: "btn btn-danger" %>
+    <% end %>
+   </div>
+   <div class="pull-left">
+    <%= form_for(user.battles.find_by(match_id: current_user.id, doing: false), html: { method: :patch}) do |f| %>
+      <%= hidden_field_tag :match_id, current_user.id %>
+      <%= hidden_field_tag :user_id, user.id %>
+      <%= f.submit "承認する", class: "btn btn-success" %>
+    <% end %>
+   </div>
+<% end %>

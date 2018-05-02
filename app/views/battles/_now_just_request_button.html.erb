@@ -1,0 +1,7 @@
+<% unless current_user == user %>
+<%= form_for(current_user.battles.build) do |f| %>
+  <%= hidden_field_tag :match_id, user.id %>
+  <%= hidden_field_tag :user_id, current_user.id%>
+  <%= f.submit '対戦を申し込む', class: 'btn btn-primary' %>
+<% end %>
+<% end %>

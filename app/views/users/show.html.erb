@@ -1,0 +1,135 @@
+<div class="user-profile">
+  <div class="icon">
+    <img src="<%= gravatar_url(@user, size: 100) %>" alt="" class="img-circle">
+    <span><h1><%= @user.name %></h1></span>
+    <% if @user.match_battle?(current_user)  %>
+      <% battle = Battle.find_by(user_id: @user.id, match_id: current_user.id)%>
+      <%= render "battles/match_button", battle: battle, user: @user %>
+    <% elsif current_user.match_battle?(@user) %>
+      <% battle = Battle.find_by(user_id: current_user.id, match_id: @user.id) %>
+      <%= render "battles/match_button", battle: battle, user: @user %>
+    <% elsif current_user.request_battle_to?(@user) %>
+      <%= render "battles/requester_button", user: @user %>
+    <% elsif  @user.request_battle_to?(current_user) %>
+      <%= render "battles/requested_button", user: @user  %>
+    <% else %>
+      <%= render "battles/now_just_request_button", user: @user %>
+    <% end %>
+  </div>
+ 
+  <div class="container">
+    <% if current_user == @user %>
+       <div class="row">
+         <div class="col-md-3">
+           <h2>対戦リクエスト<span class="badge"><%= @count_requestings %></span></h2>
+           <% @request_battles.each do |battle| %>
+            <% user = User.find_by(id: battle.match_id) %>
+            <div class="panel panel-default">
+              <div class="panel-heading text-center">
+                <img class="panel-object img-rounded" src="<%= gravatar_url(user, { size: 50 }) %>" alt="">
+              </div>
+              <div class="panel-body">
+                <%= user.name %>
+                <p><%= link_to 'View profile', user_path(user) %></p>
+                <%= render "battles/requester_button", user: user %>
+              </div>
+            </div>
+           <% end %>
+         </div>
+         <div class="col-md-3">
+           <h2>対戦申請<span class="badge"><%= @count_requesters %></span></h2>
+           <% @requested_battles.each do |battle| %>
+            <% user = User.find(battle.user_id) %>
+            <div class="panel panel-default">
+              <div class="panel-heading text-center">
+                <img class="panel-object img-rounded" src="<%= gravatar_url(user, { size: 50 }) %>" alt="">
+              </div>
+              <div class="panel-body">
+                <%= user.name %>
+                <p><%= link_to 'View profile', user_path(user) %></p>
+                <%= render "battles/requested_button", user: user %>
+              </div>
+            </div>
+           <% end %>
+         </div>
+         <div class="col-md-3">
+          <h2>マッチング一覧<span class="badge"><%= @count_match_people%></span></h2>
+          <% @match_battles.each do |battle| %>
+            <% if battle.user == @user  %>
+              <% match_user = User.find(battle.match_id) %>
+              <div class="panel panel-default">
+                <div class="panel-heading text-center">
+                  <img class="panel-object img-rounded" src="<%= gravatar_url(match_user, { size: 50 }) %>" alt="">
+                </div>
+                <div class="panel-body">
+                  <%= match_user.name %>
+                  <p><%= link_to 'View profile', user_path(match_user) %></p>
+                  <%= render "battles/match_button", battle: battle, user: match_user %>
+                  <%= render "battles/battle_show_button", user: match_user, battle: battle%>
+                </div>
+              </div>
+          <% else %>
+            <% match_user = User.find(battle.user_id) %>
+              <div class="panel panel-default">
+                <div class="panel-heading text-center">
+                  <img class="panel-object img-rounded" src="<%= gravatar_url(match_user, { size: 50 }) %>" alt="">
+                </div>
+                <div class="panel-body">
+                  <%= match_user.name %>
+                  <p><%= link_to 'View profile', user_path(match_user) %></p>
+                  <% room = Room.find_by(battle_id: battle.id)%>
+                  <% if room %>
+                    <%= render "battles/talk_button", battle: battle, user: match_user, room: room%>
+                  <% else %>
+                    <%= render "battles/match_button",battle: battle, user: match_user %>
+                  <% end %>
+                  <%= render "battles/battle_show_button", user: match_user, battle: battle%>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+         </div>
+       <div class="col-md-3">
+        <div><h2>マッチング履歴</h2></div>
+         <% @histrecord.each do |battle|%>
+           <% if battle.user_id == @user.id %>
+              <% match_user = User.find(battle.match_id) %>
+              <div class="panel panel-default">
+                <div class="panel-heading text-center">
+                  <img class="panel-object img-rounded" src="<%= gravatar_url(match_user, { size: 50 }) %>" alt="">
+                </div>
+                <div class="panel-body">
+                  <span>
+                    <% aite = [match_user.id, match_user.name] %>
+                    <span style="padding-right: 10px;"><%= aite[1] %>さん</span>  <span><%=current_user.count_match(aite[0]) %>回対戦しました!</span>
+                  </span>
+                  <p><%= link_to 'View profile', user_path(match_user) %></p>
+                  <% if current_user.done_battle?(match_user) || match_user.done_battle?(current_user) %>
+                    <%= render "battles/request_again_button", user: match_user %>
+                  <% end %>
+                </div>
+              </div>
+          <% else %>
+            <% match_user = User.find(battle.user_id) %>
+              <div class="panel panel-default">
+                <div class="panel-heading text-center">
+                  <img class="panel-object img-rounded" src="<%= gravatar_url(match_user, { size: 50 }) %>" alt="">
+                </div>
+                <div class="panel-body">
+                  <span>
+                  <% aite = [match_user.id, match_user.name] %>
+                  <span style="padding-right: 10px;"><%= aite[1] %>さん</span>  <span><%=current_user.count_match(aite[0]) %>回対戦しました!</span>
+                  </span>
+                  <p><%= link_to 'View profile', user_path(match_user) %></p>
+                  <% if current_user.done_battle?(match_user) || match_user.done_battle?(current_user)  %>
+                    <%= render "battles/request_again_button", user: match_user %>
+                  <% end %>
+              </div>
+            <% end %>
+         <% end %>
+       </div>
+     </div>
+    </div>
+   <% end %>
+  </div>
+</div>

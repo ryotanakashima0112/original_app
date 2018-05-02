@@ -1,0 +1,5 @@
+<% unless current_user == user %>
+<div class="pull-left">
+  <%= link_to "ルーム作成", new_battle_room_path(battle), class: 'btn btn-success'%>
+</div>
+<% end %>

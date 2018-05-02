@@ -1,0 +1,14 @@
+<% content_for :cover do %>
+  <div class="cover">
+    <div class="cover-inner">
+      <div class="cover-contents">
+        <h1>さあ、デュエルをはじめよう！</h1>
+        <% unless logged_in? %>
+            <%= link_to 'サービスを開始する', signup_path, class: 'btn btn-success btn-lg' %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<p>テスト</p>

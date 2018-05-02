@@ -1,0 +1,6 @@
+<% unless current_user == user %>
+  <%= form_for(current_user.battles.find_by(match_id: user.id, doing: false), html: { method: :delete }) do |f| %>
+      <%= hidden_field_tag :match_id, user.id%>
+      <%= f.submit "承認待ち", class: "btn btn-danger" %>
+  <% end %>
+<% end %>

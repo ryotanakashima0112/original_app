@@ -1,0 +1,16 @@
+<% comments.each do |comment| %>
+  <ul class="media-list"  style="font-size: 15px;">
+    <% if comment.from_id == current_user.id %>
+    <li class="media">
+      <div class="pull-right"><span style="padding-right: 15px;"><%= comment.created_at.in_time_zone('Asia/Tokyo').strftime("%Y/%m/%d %02H:%02M")  %></span><%= comment.content %></div>
+    </li>
+    <% else %>
+      <li class="media">
+      <span class="pull-left" style="font-weight: bold;"><p><%= @user.name %></p></span>
+      <span class="media-body"><p><%= comment.content %><span style="padding-left: 15px;"><%= comment.created_at.in_time_zone('Asia/Tokyo').strftime("%Y/%m/%d %02H:%02M")  %></span></p></span>
+      
+    </li>
+    <% end %>
+    </ul>    
+<% end %>
+<%= paginate comments %>

@@ -1,0 +1,29 @@
+<% unless current_user == user %>
+  <% if current_user.request_battle_to?(user) %>
+    <% if user.accept_battle_from?(current_user) %>
+     <%= form_tag("/rooms/new", html: { method: :get }) do |f| %>
+        <%= hidden_field_tag :match_id, user.id %>
+        <%= hidden_field_tag :user_id, current_user.id %>
+        <%= f.submit 'チャットを始める', class: 'btn btn-success' %>
+      <% end %>
+    <% else %>
+      <div class="pull-left">
+        <%= form_for(current_user.battles.find_by(match_id: user.id), html: { method: :delete }) do |f| %>
+          <%= hidden_field_tag :match_id, user.id  %>
+          <%= f.submit '拒否する', class: 'btn btn-danger' %>
+        <% end %>
+      </div>
+      <div class="pull-right">
+        <%= form_for(current_user.battles.find_by(match_id: user.id), html: {method: :patch}) do |f| %>
+          <%= hidden_field_tag :match_id, user.id %>
+          <%= f.submit 'マッチ成立！', class: 'btn btn-success' %>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+      <%= form_for(current_user.battles.build) do |f| %>
+        <%= hidden_field_tag :match_id, user.id %>
+        <%= f.submit '対戦を申し込む', class: 'btn btn-primary' %>
+      <% end %>
+  <% end %>
+<% end %>
