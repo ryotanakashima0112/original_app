@@ -1,22 +1,38 @@
 <div class="user-profile">
-  <div class="icon">
-    <img src="<%= gravatar_url(@user, size: 100) %>" alt="" class="img-circle">
-    <span><h1><%= @user.name %></h1></span>
-    <% if @user.match_battle?(current_user)  %>
-      <% battle = Battle.find_by(user_id: @user.id, match_id: current_user.id)%>
-      <%= render "battles/match_button", battle: battle, user: @user %>
-    <% elsif current_user.match_battle?(@user) %>
-      <% battle = Battle.find_by(user_id: current_user.id, match_id: @user.id) %>
-      <%= render "battles/match_button", battle: battle, user: @user %>
-    <% elsif current_user.request_battle_to?(@user) %>
-      <%= render "battles/requester_button", user: @user %>
-    <% elsif  @user.request_battle_to?(current_user) %>
-      <%= render "battles/requested_button", user: @user  %>
-    <% else %>
-      <%= render "battles/now_just_request_button", user: @user %>
-    <% end %>
+  <div class="row">
+    <aside class="col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><%= @user.name %></h3>
+        </div>
+        <div class="panel-body al-c">
+          <img src="<%= gravatar_url(@user, size: 100) %>" alt="" class="img-thumbnail">
+          <% if current_user == @user %>
+          <%= link_to "ユーザー編集ページへ移動する", edit_user_path(@user), class: "btn btn-default"%>
+          <% end %>
+          <% if @user.match_battle?(current_user)  %>
+            <% battle = Battle.find_by(user_id: @user.id, match_id: current_user.id)%>
+            <%= render "battles/match_button", battle: battle, user: @user %>
+          <% elsif current_user.match_battle?(@user) %>
+            <% battle = Battle.find_by(user_id: current_user.id, match_id: @user.id) %>
+            <%= render "battles/match_button", battle: battle, user: @user %>
+          <% elsif current_user.request_battle_to?(@user) %>
+            <%= render "battles/requester_button", user: @user %>
+          <% elsif  @user.request_battle_to?(current_user) %>
+            <%= render "battles/requested_button", user: @user  %>
+          <% else %>
+            <%= render "battles/now_just_request_button", user: @user %>
+          <% end %>
+        </div>
+      </div>
+    </aside>
+    <div class="col-md-8">
+      <% if @user.age.present? %> &nbsp;<%= @user.age %>代 <% end %>
+      &nbsp;<%= @user.sex %></p>
+      <p class="orange b">自己紹介</p>
+      <p><%= @user.introduce %></p>
+    </div>
   </div>
- 
   <div class="container">
     <% if current_user == @user %>
        <div class="row">
